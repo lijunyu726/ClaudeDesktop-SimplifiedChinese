@@ -1,0 +1,112 @@
+/* No comment provided by engineer. */
+"  to stop" = "  以停止";
+
+/* No comment provided by engineer. */
+"  to stop." = "  以停止。";
+
+/* No comment provided by engineer. */
+" from Claude" = " 来自 Claude";
+
+/* Context pill for attaching a file */
+"Attach a file" = "附加文件";
+
+/* Cancel modal button */
+"Cancel" = "取消";
+
+/* Title for modal asking for accessbility permissions
+   Title for modal asking for accessibility permissions */
+"Claude needs Accessibility access so you can attach files" = "Claude 需要辅助功能权限才能附加文件";
+
+/* Title for modal asking for screen capture permissions */
+"Claude needs Screen Capture access so you can share screenshots" = "Claude 需要屏幕录制权限才能共享截图";
+
+/* Tooltip for screenshot capture mode */
+"Click or drag to take a screenshot" = "点击或拖动以截取屏幕";
+
+/* Continue modal button */
+"Continue" = "继续";
+
+/* Subtitle shown in the shutdown panel while the VM is stopping */
+"Cowork is taking a moment to cleanly exit. This may take up to a minute." = "Cowork 正在正常退出，请稍候。最多可能需要一分钟。";
+
+/* No comment provided by engineer. */
+"Drag to take a screenshot" = "拖动以截取屏幕";
+
+/* Title shown in the shutdown panel while the VM is stopping */
+"Finishing up" = "正在完成";
+
+/* Placeholder for quick entry text input for existing chat */
+"Keep chatting with Claude about..." = "继续与 Claude 聊聊关于……";
+
+/* No comment provided by engineer. */
+"Needs additional permission" = "需要额外权限";
+
+/* Heading for when quick entry will be sent to a new chat */
+"New Chat" = "新对话";
+
+/* Error message shown when user is logged out */
+"Not currently connected to claude.ai" = "当前未连接到 claude.ai";
+
+/* No comment provided by engineer. */
+"Not now" = "暂时不要";
+
+/* No comment provided by engineer. */
+"Open in main window" = "在主窗口中打开";
+
+/* Body for modal asking for accessbility permissions
+   Body for modal asking for accessibility permissions */
+"Open System Settings and enable Accessibility access for Claude." = "请打开"系统设置"并为 Claude 开启辅助功能权限。";
+
+/* Body for modal asking for screen capture permissions */
+"Open System Settings and enable Screen Capture access for Claude." = "请打开"系统设置"并为 Claude 开启屏幕录制权限。";
+
+/* Name of pasted image */
+"Pasted Image" = "粘贴的图片";
+
+/* Error message shown to users for short quick entry messages */
+"Quick access prompts must be at least 3 characters" = "快速访问提示至少需要 3 个字符";
+
+/* No comment provided by engineer. */
+"Quickly share content with Claude" = "快速与 Claude 共享内容";
+
+/* Heading for list of recent conversations to send quick entry input to */
+"Recent" = "最近";
+
+/* No comment provided by engineer. */
+"Remove" = "移除";
+
+/* No comment provided by engineer. */
+"Remove " = "移除 ";
+
+/* No comment provided by engineer. */
+"Screen Recording Permission Required" = "需要屏幕录制权限";
+
+/* No comment provided by engineer. */
+"Send " = "发送 ";
+
+/* No comment provided by engineer. */
+"Send a screenshot of " = "发送以下内容的截图：";
+
+/* Menu option for when quick entry will be sent to a new chat */
+"Send to new chat" = "发送到新对话";
+
+/* No comment provided by engineer. */
+"Speak to Claude, then press  " = "对 Claude 说话，然后按  ";
+
+/* Context pill for capturing the screen */
+"Take a screenshot" = "截取屏幕";
+
+/* No comment provided by engineer. */
+"To capture screenshots, Clod needs permission to record your screen." = "要截取屏幕截图，Clod 需要屏幕录制权限。";
+
+/* Text shown while audio is being transcribed */
+"Transcribing..." = "正在转录……";
+
+/* Context pill to enable accessibility permission */
+"Turn on file sharing" = "开启文件共享";
+
+/* No comment provided by engineer. */
+"Turn on screenshots" = "开启截图功能";
+
+/* Placeholder for quick entry text input */
+"What can I help you with today?" = "今天有什么可以帮您的？";

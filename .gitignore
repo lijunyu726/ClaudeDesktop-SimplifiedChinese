@@ -1,0 +1,8 @@
+.DS_Store
+*.log
+*.bak
+/tmp/
+node_modules/
+__pycache__/
+.env
+en-US.json
