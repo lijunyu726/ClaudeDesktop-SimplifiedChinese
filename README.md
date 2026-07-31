@@ -17,6 +17,8 @@
 
 [📦 查看文件](#-包含的文件) · [🚀 使用方式](#-使用方式) · [📐 格式规范](#-json-格式规范) · [🤝 贡献翻译](#-贡献翻译) · [📄 许可证](#-许可证)
 
+[💡 查看 AI 一键安装 Prompt →](INSTALL_PROMPT.md)
+
 </div>
 
 ---
@@ -79,6 +81,8 @@ cd ClaudeDesktop-SimplifiedChinese
 > ⚠️ **关于加载步骤**
 > 不同操作系统的安装路径和包结构不同（例如 macOS 的 `.app`、Windows 的 `.exe` 目录），Claude 自动更新也会覆盖修改。
 > 因此本仓库**不维护加载脚本**——你可以使用第三方注入工具，或自行根据上表路径复制。
+>
+> 💡 **推荐**：把 [INSTALL_PROMPT.md](INSTALL_PROMPT.md) 中的整段粘贴到 Claude Code，让 AI 自动完成跨平台注入、JS bundle 修补、locale 设置。
 
 ---
 
