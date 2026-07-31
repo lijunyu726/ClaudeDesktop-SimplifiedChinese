@@ -1,91 +1,57 @@
-# Claude Desktop 汉化
+# Claude Desktop 简体中文语言包
 
-为 Claude 桌面版 (macOS) 提供完整的简体中文汉化支持。
+Claude Desktop 的简体中文 (zh-CN) 语言包，提供完整的界面翻译 JSON 文件。
 
-![Claude Desktop 中文界面](https://img.shields.io/badge/coverage-100%25-brightgreen) ![macOS](https://img.shields.io/badge/platform-macOS-blue) ![Claude](https://img.shields.io/badge/Claude-1.17377-lightgrey)
+> **本仓库仅提供翻译文件本身，不包含安装/卸载脚本。**
+> 加载方式（如何把 JSON 注入到 Claude Desktop）由各平台、各版本的桌面端自行处理，本项目不绑定任何操作系统。
 
-## 📸 效果预览
+![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen) ![locale](https://img.shields.io/badge/locale-zh--CN-blue) ![format](https://img.shields.io/badge/format-JSON-lightgrey)
 
-汉化覆盖 Claude 桌面版的所有界面：
+## 📦 包含的翻译文件
 
-- ✅ 菜单栏（文件、编辑、视图、窗口、帮助）
-- ✅ 设置界面（通用、隐私、能力、连接器等所有选项）
-- ✅ 系统对话框（确认、取消、错误提示等）
-- ✅ 主聊天界面（18,000+ 条翻译）
-- ✅ 模型描述和功能说明
+| 文件 | 层级 | 条目数 | 说明 |
+|------|------|--------|------|
+| `patches/zh-CN-layer-b.json` | Layer B — Electron 主进程 | ~435 | 菜单栏、系统对话框、快捷键 |
+| `patches/zh-CN-layer-c.json` | Layer C — Web 渲染器 | ~18,000 | 主聊天界面、设置、连接器、扩展等 |
+| `patches/zh-CN-layer-c-dynamic.json` | Layer C Dynamic | ~46 | 模型描述、功能说明等动态内容 |
 
-## 🧠 使用方式
+合计 **约 18,500 条**翻译条目。
 
-本项目**不提供一键安装脚本**，而是提供翻译文件和技术文档，由你电脑上的 **Claude Code**（或其他 AI 助手）来完成汉化安装。
+## 🚀 使用方式
 
-### 使用步骤
-
-1. **克隆本仓库到你的电脑**
-
-```bash
-git clone https://github.com/lijunyu726/ClaudeDesktop-SimplifiedChinese.git ~/claude-zh
-```
-
-2. **让 Claude Code 读取技术文档并执行汉化**
-
-在 Claude Code 中输入：
-
-> 请阅读 ~/claude-desktop-zh/docs/TECHNICAL_GUIDE.md，然后按照文档中的步骤对本机的 Claude Desktop 进行中文汉化。翻译文件在 ~/claude-desktop-zh/patches/ 目录下。
-
-3. **Claude Code 会自动完成：**
-   - 检测系统环境和安全权限
-   - 注入翻译文件
-   - 修补前端语言列表
-   - 设置 locale
-   - 重启 Claude
-
-4. **在 Claude 设置中选择中文**
-
-打开 Claude → Settings → Language → 中文 (zh-CN)
-
-## 📦 项目结构
+Claude Desktop 使用 `@formatjs/intl` 的哈希键格式，i18n 文件按以下路径加载：
 
 ```
-claude-desktop-zh/
-├── patches/                          # 翻译补丁文件
-│   ├── zh-CN-layer-b.json            # Electron 主进程翻译 (~435 条)
-│   ├── zh-CN-layer-c.json            # Web 渲染器翻译 (~18,000 条)
-│   ├── zh-CN-layer-c-dynamic.json    # 动态内容翻译 (~46 条)
-│   └── zh_CN.lproj.strings           # macOS 原生层翻译 (~50 条)
-├── docs/
-│   └── TECHNICAL_GUIDE.md            # 完整汉化技术文档（供 AI 读取执行）
-├── README.md                         # 本文件
-├── ARCHITECTURE.md                   # 技术架构文档
-├── CONTRIBUTING.md                   # 贡献指南
-└── LICENSE                           # MIT 许可证
+zh-CN-layer-b.json          → Resources/zh-CN.json
+zh-CN-layer-c.json          → ion-dist/i18n/zh-CN.json
+zh-CN-layer-c-dynamic.json  → ion-dist/i18n/dynamic/zh-CN.json
 ```
 
-## 🔧 工作原理
+在 Claude Desktop 中加载完成后，进入 **Settings → Language → 中文 (zh-CN)** 即可切换界面。
 
-Claude 桌面版是基于 Electron 的应用，本地化分为三层：
+> ⚠️ **加载步骤因平台和版本而异** —— 不同操作系统（macOS / Windows / Linux）的安装位置和包结构不同，Claude Desktop 的自动更新也会覆盖修改。请参考你所用平台对应的工具或文档完成加载；本仓库不维护加载脚本。
 
-| 层级 | 文件 | 内容 | 字符串数 |
-|------|------|------|---------|
-| A - macOS 原生层 | `zh_CN.lproj/Localizable.strings` | 快捷入口、截屏弹窗 | ~50 |
-| B - Electron 主进程 | `Resources/zh-CN.json` | 菜单栏、系统对话框 | ~435 |
-| C - Web 渲染器 | `ion-dist/i18n/zh-CN.json` | 主聊天界面 | ~18,000 |
+## 📐 JSON 格式约定
 
-汉化需要：
-1. 注入翻译 JSON 文件到各层
-2. 修补前端 JS bundle，将 `zh-CN` 添加到支持的语言列表
-3. 设置应用的 locale 为 `zh-CN`
+```json
+{
+  "hashKey": "翻译后的文本",
+  "paramKey": "包含 {name} 的文本",
+  "htmlKey": "包含 <link>标签</link> 的文本",
+  "pluralKey": "{count, plural, one {# 条} other {# 条}}"
+}
+```
 
-完整技术细节请阅读 [技术文档](docs/TECHNICAL_GUIDE.md)。
+- **键由源字符串哈希生成**，绝对不能修改，只能修改 value
+- 占位符 `{name}` `{count}` `{error}` 等必须保留
+- HTML 标签 `<link>` `<b>` `<a>` `<learnMoreLink>` 等必须保留
+- ICU 复数语法 `{count, plural, ...}` 必须完整保留
 
-## ⚠️ 已知限制
+详细规范见 [ARCHITECTURE.md](ARCHITECTURE.md)。
 
-1. **仅支持 macOS** — Windows/Linux 的文件路径和打包方式不同
-2. **自动更新覆盖** — Claude 更新后会清除汉化，需重新执行
-3. **技术术语保留英文** — MCP, API 等专业术语不做翻译
+## 🤝 贡献翻译
 
-## 🤝 贡献
-
-欢迎翻译改进！请阅读 [贡献指南](CONTRIBUTING.md)。
+欢迎改进翻译质量！请阅读 [贡献指南](CONTRIBUTING.md)。
 
 ## 📄 许可证
 
@@ -93,9 +59,9 @@ MIT License - 详见 [LICENSE](LICENSE)
 
 ## 🔗 相关链接
 
-- [Claude 官方下载](https://claude.ai/download)
+- [Claude Desktop 下载](https://claude.ai/download)
 - [Claude 官方文档](https://docs.anthropic.com)
 
 ---
 
-**免责声明：** 本项目是非官方的社区翻译项目，与 Anthropic 无关。
+**免责声明：** 本项目是非官方的社区翻译项目，与 Anthropic 无关。翻译文件以原样提供，作者不对因使用本仓库内容导致的任何问题负责。
