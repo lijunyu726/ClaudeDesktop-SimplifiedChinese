@@ -82,97 +82,111 @@ cd ClaudeDesktop-SimplifiedChinese
 >
 > 💡 **推荐**：把下方折叠框里的整段 Prompt 复制到 Claude Code，让 AI 自动完成跨平台注入、JS bundle 修补、locale 设置。
 
----
-
 ## 🤖 AI 一键安装 Prompt
 
-<details>
-<summary>📋 点击展开：跨平台 AI 安装 Prompt（macOS / Windows / Linux）</summary>
+> 两个折叠块，分别给 macOS / Windows 用户，复制整段到 Claude Code 即可。
 
-> **用法**：把下面 `请将...` 到 `###END###` 之间的整段内容（连同 markdown 围栏）复制粘贴到 Claude Code，AI 会自动完成汉化注入。
+### 🍎 macOS
+
+<details>
+<summary>📋 点击展开：macOS 安装 Prompt（终端直接运行）</summary>
+
+> **用法**：把下面 `请将...` 到 `###END###` 之间的整段内容（连同 markdown 围栏）复制粘贴到 Claude Code。
 
 ````markdown
-请将本机已安装的 Claude Desktop 切换为简体中文界面。仓库：https://github.com/lijunyu726/ClaudeDesktop-SimplifiedChinese
+请将本机的 Claude Desktop (macOS) 切换为简体中文界面。
+仓库：https://github.com/lijunyu726/ClaudeDesktop-SimplifiedChinese
+
+翻译文件：本仓库 `patches/` 目录下 3 个 JSON。
 
 # 步骤
 
-## 1. 定位 Claude Desktop 安装目录
+## 1. 关闭 Claude Desktop
 
-把 Resources 目录记为 `RES`：
+```bash
+pkill -9 -f "Claude" 2>/dev/null; sleep 1
+```
 
-- macOS：`RES=/Applications/Claude.app/Contents/Resources`
-- Windows：`RES=%LOCALAPPDATA%\AnthropicClaude\resources`
-- Linux：`find /opt ~/.local -name "Claude" -type f 2>/dev/null | head -1`，Resources 在其相邻的 `resources/` 子目录
+## 2. 定位 Claude.app 资源目录
 
-如未找到，搜索整个文件系统（`find / -iname "*Claude*" -type d 2>/dev/null`）。
+- 默认路径：`/Applications/Claude.app/Contents/Resources`
+- 把完整路径记为变量 `A`
 
-## 2. 备份现有翻译文件（如果存在）
+如未在该路径找到，使用以下方式之一发现：
+```bash
+mdfind -name "Claude.app" 2>/dev/null | head -5
+# 或
+find /Applications ~/Applications -maxdepth 3 -name "Claude.app" -type d 2>/dev/null
+```
+
+找到后 `A=<Claude.app>/Contents/Resources`。
+
+## 3. 备份现有翻译文件（如果存在）
 
 ```bash
 mkdir -p ~/.claude-locale/backup
-for src in "$RES/zh-CN.json" "$RES/zh.json" "$RES/ion-dist/i18n/zh-CN.json" "$RES/ion-dist/i18n/dynamic/zh-CN.json"; do
-  [ -f "$src" ] && cp "$src" "$HOME/.claude-locale/backup/$(echo $src | sed "s|$RES/||" | tr / _)"
+for src in "$A/zh-CN.json" "$A/zh.json" "$A/ion-dist/i18n/zh-CN.json" "$A/ion-dist/i18n/dynamic/zh-CN.json"; do
+  if [ -f "$src" ]; then
+    name=$(echo "$src" | sed "s|$A/||" | tr '/' '_')
+    cp "$src" "$HOME/.claude-locale/backup/$name"
+  fi
 done
 ```
 
-Windows 把 `cp` 换 `Copy-Item`，`$HOME` 换 `$env:USERPROFILE`。
-
-## 3. 复制 3 个 JSON 翻译文件
-
-仓库 `patches/` 下有 3 个文件，复制到 `RES`：
+## 4. 复制 4 个翻译文件到 $A
 
 ```bash
-sudo cp patches/zh-CN-layer-b.json          "$RES/zh-CN.json"
-sudo cp patches/zh-CN-layer-b.json          "$RES/zh.json"
-sudo mkdir -p "$RES/ion-dist/i18n/dynamic"
-sudo cp patches/zh-CN-layer-c.json          "$RES/ion-dist/i18n/zh-CN.json"
-sudo cp patches/zh-CN-layer-c-dynamic.json  "$RES/ion-dist/i18n/dynamic/zh-CN.json"
+sudo cp patches/zh-CN-layer-b.json          "$A/zh-CN.json"
+sudo cp patches/zh-CN-layer-b.json          "$A/zh.json"  # 别名
+sudo mkdir -p "$A/ion-dist/i18n/dynamic"
+sudo cp patches/zh-CN-layer-c.json          "$A/ion-dist/i18n/zh-CN.json"
+sudo cp patches/zh-CN-layer-c-dynamic.json  "$A/ion-dist/i18n/dynamic/zh-CN.json"
 ```
 
-> 文件名以仓库中实际命名为准；如果你的 patches 目录名不是 `patches`，按实际路径替换。
-
-## 4. 修补 JS bundle（让界面出现「中文」选项）
+## 5. 修补 JS bundle
 
 ```bash
-JS=$(grep -rl '"id-ID"' "$RES/ion-dist/assets/" 2>/dev/null | head -1)
-[ -n "$JS" ] && sudo sed -i \
-  -e 's/"id-ID"/"id-ID","zh-CN"/' \
-  -e 's/case"id-ID":return\["language","id"\]/case"id-ID":return["language","id"];case"zh-CN":return["language","zh"]/' \
-  -e 's/"id-ID":"id"/"id-ID":"id","zh-CN":"zh_CN"/' \
-  "$JS"
+JS=$(grep -rl '"id-ID"' "$A/ion-dist/assets/" 2>/dev/null | head -1)
+if [ -n "$JS" ]; then
+  sudo sed -i '' \
+    -e 's/"id-ID"/"id-ID","zh-CN"/' \
+    -e 's/case"id-ID":return\["language","id"\]/case"id-ID":return["language","id"];case"zh-CN":return["language","zh"]/' \
+    -e 's/"id-ID":"id"/"id-ID":"id","zh-CN":"zh_CN"/' \
+    "$JS"
+fi
 ```
 
-> 若 grep 无结果，说明该版本已自带 zh-CN，跳过此步。
+> 若 grep 无结果，说明该版本已自带 zh-CN，跳过。
 
-## 5. 设置 locale + 重启
+## 6. 设置 locale（可选）
 
 ```bash
-python3 -c "
-import json, os
-p = os.path.expanduser('~/Library/Application Support/Claude/config.json')
-if os.path.exists(p):
-    c = json.load(open(p)); c['locale']='zh-CN'
-    json.dump(c, open(p,'w'), indent=4, ensure_ascii=False)
+CONFIG="$HOME/Library/Application Support/Claude/config.json"
+[ -f "$CONFIG" ] && python3 -c "
+import json
+c = json.load(open(r'$CONFIG'))
+c['locale'] = 'zh-CN'
+json.dump(c, open(r'$CONFIG', 'w'), indent=4, ensure_ascii=False)
 "
-pkill -9 -f "Claude" 2>/dev/null; sleep 2
+```
+
+## 7. 启动 Claude
+
+```bash
 open -a "Claude"
 ```
 
-Windows 用 `Get-Process Claude | Stop-Process -Force; Start-Process claude.exe`。
-
-## 6. 切换语言
-
-打开 Claude → **Settings → Language → 中文 (zh-CN)**。重启后生效。
+启动后进入 **Settings → Language → 中文 (zh-CN)**。
 
 # 验证
 
-快速确认 3 个点：① 菜单栏是中文 ② 设置面板是中文 ③ 主聊天界面是中文。
+菜单栏、设置面板、聊天界面三者任一为中文即生效。
 
 # 常见问题
 
-- **`sudo cp` 报 Operation not permitted**（macOS）：SIP 阻止。复制应用：`cp -r /Applications/Claude.app ~/Documents/Claude.app`，后续所有操作改用 `~/Documents/Claude.app/...`，双击副本启动。首次启动需要右键→打开绕过 Gatekeeper。
-- **更新后丢失**：Claude 自动更新会覆盖 `.app`，重新执行步骤 3-5 即可。
-- **卸载**：删 `~/.claude-locale/backup/`，或在设置里切换回英文。
+- **`sudo cp` 报 Operation not permitted**：SIP 限制。复制应用：`cp -r /Applications/Claude.app ~/Documents/Claude.app`，后续操作改用 `~/Documents/Claude.app/Contents/Resources`，双击副本启动。首次启动需右键→打开绕过 Gatekeeper。
+- **更新后丢失**：Claude 自动更新覆盖 `.app`，重新执行步骤 4-7。
+- **JS 没匹配 `"id-ID"`**：版本已自带 zh-CN，跳过步骤 5。
 
 ###END###
 ````
@@ -180,6 +194,127 @@ Windows 用 `Get-Process Claude | Stop-Process -Force; Start-Process claude.exe`
 </details>
 
 ---
+
+### 🪟 Windows
+
+<details>
+<summary>📋 点击展开：Windows 安装 Prompt（PowerShell，须以管理员身份运行）</summary>
+
+> **用法**：把下面 `请将...` 到 `###END###` 之间的整段内容（连同 markdown 围栏）复制粘贴到 Claude Code。会要求管理员权限。
+
+````markdown
+请将本机的 Claude Desktop (Windows) 切换为简体中文界面。
+仓库：https://github.com/lijunyu726/ClaudeDesktop-SimplifiedChinese
+
+翻译文件：本仓库 `patches/` 目录下 3 个 JSON。
+
+# 步骤
+
+## 1. 关闭 Claude Desktop
+
+```powershell
+Get-Process -Name "Claude" -ErrorAction SilentlyContinue | Stop-Process -Force
+```
+
+## 2. 定位安装目录（动态发现）
+
+默认路径 `C:\Program Files\WindowsApps\Claude_*\app\`，版本号会变：
+
+```powershell
+$appDir = Get-ChildItem "C:\Program Files\WindowsApps\Claude_*\app" -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
+if (-not $appDir) {
+  $appDir = (Get-ChildItem "C:\Program Files" -Filter "Claude.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1).DirectoryName
+}
+$res = "$appDir\resources"
+```
+
+## 3. 取目录所有权（必须管理员权限）
+
+`WindowsApps\` 默认仅 TrustedInstaller 可写，普通管理员也不行：
+
+```powershell
+takeown /F "$appDir" /R /D Y | Out-Null
+icacls "$appDir" /grant "${env:USERNAME}:(OI)(CI)F" /T /Q | Out-Null
+```
+
+## 4. 备份现有翻译文件（如果存在）
+
+```powershell
+$backup = "$env:USERPROFILE\.claude-locale\backup"
+New-Item -ItemType Directory -Path $backup -Force | Out-Null
+foreach ($src in @("$res\zh-CN.json", "$res\zh.json", "$res\ion-dist\i18n\zh-CN.json", "$res\ion-dist\i18n\dynamic\zh-CN.json")) {
+  if (Test-Path $src) {
+    $name = Split-Path $src -Leaf
+    Copy-Item $src "$backup\$name" -Force
+  }
+}
+```
+
+## 5. 复制 3 个 JSON 到 Resources
+
+```powershell
+Copy-Item "patches\zh-CN-layer-b.json"          "$res\zh-CN.json" -Force
+Copy-Item "patches\zh-CN-layer-b.json"          "$res\zh.json" -Force
+New-Item "$res\ion-dist\i18n\dynamic" -ItemType Directory -Force | Out-Null
+Copy-Item "patches\zh-CN-layer-c.json"          "$res\ion-dist\i18n\zh-CN.json" -Force
+Copy-Item "patches\zh-CN-layer-c-dynamic.json"  "$res\ion-dist\i18n\dynamic\zh-CN.json" -Force
+```
+
+## 6. 修补 JS bundle
+
+```powershell
+Get-ChildItem "$res\ion-dist\assets" -Recurse -Filter "*.js" -ErrorAction SilentlyContinue |
+  Where-Object { Select-String -Path $_.FullName -Pattern '"id-ID"' -Quiet } |
+  ForEach-Object {
+    $c = Get-Content $_.FullName -Raw
+    $c = $c.Replace('"id-ID"', '"id-ID","zh-CN"')
+    $c = $c.Replace(
+      'case"id-ID":return["language","id"]',
+      'case"id-ID":return["language","id"];case"zh-CN":return["language","zh_CN"]'
+    )
+    $c = $c.Replace('"id-ID":"id"', '"id-ID":"id","zh-CN":"zh_CN"')
+    Set-Content -Path $_.FullName -Value $c -Encoding UTF8 -Force
+  }
+```
+
+> 若无文件含 `"id-ID"`，说明版本已自带 zh-CN，跳过。
+
+## 7. 设置 locale
+
+```powershell
+$cfg = "$env:APPDATA\Claude\config.json"
+if (Test-Path $cfg) {
+  $c = Get-Content $cfg -Raw | ConvertFrom-Json
+  $c.locale = "zh-CN"
+  $c | ConvertTo-Json -Depth 10 | Set-Content $cfg -Encoding UTF8
+}
+```
+
+## 8. 启动 Claude
+
+```powershell
+Start-Process "$appDir\Claude.exe"
+```
+
+启动后进入 **Settings → Language → 中文 (zh-CN)**。
+
+# 验证
+
+菜单栏、设置面板、聊天界面三者任一为中文即生效。
+
+# 常见问题
+
+- **WindowsApps 写入被拒**：必须以**管理员身份**运行 PowerShell，再跑第 3 步获取所有权。
+- **JS 没匹配 `"id-ID"`**：该版本已自带 zh-CN，跳过步骤 6。
+- **更新后丢失**：Claude 自动更新覆盖 `.exe`，重新执行步骤 5-7。
+
+###END###
+````
+
+</details>
+
+---
+
 
 ## 📐 JSON 格式规范
 
