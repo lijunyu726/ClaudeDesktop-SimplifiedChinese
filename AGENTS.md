@@ -19,7 +19,7 @@ scratch/                          临时文件（批次、参考表），已 git
 
 ## 加载机制（关键设计决策）
 
-- **最重要的限制（2.16120.0 实测）**：使用 Anthropic 账号登录时，主界面从 `https://claude.ai` 在线加载（日志 `~/Library/Logs/Claude/claude.ai-web.log`），本地 `ion-dist` 只通过 `app://localhost` 提供，实测访问次数为 0。语言列表、界面翻译都来自网站，下面的前端补丁和 `ion-dist/i18n/zh-CN.json` 对主界面不生效；只有主进程层（菜单、托盘、对话框）读取本地文件。判断一个改动是否生效前，先确认它影响的是本地渲染还是 claude.ai 在线页面。
+- **最重要的限制（2.16120.0 实测）**：使用 Anthropic 账号登录时，主界面从 `https://claude.ai` 在线加载（日志 `~/Library/Logs/Claude/claude.ai-web.log`），本地 `ion-dist` 只通过 `app://localhost` 提供，实测访问次数为 0。语言列表、界面翻译都来自网站，下面的前端补丁和 `ion-dist/i18n/zh-CN.json` 对主界面不生效；只有主进程层（菜单、托盘、对话框）读取本地文件，但在线主界面启动后会通过 requestLocaleChange 把账号语言同步回主进程，覆盖 config.json 里的 locale，所以本地设置 zh-CN 也保持不住（实测）。判断一个改动是否生效前，先确认它影响的是本地渲染还是 claude.ai 在线页面。
 
 - 主进程扫描 `Contents/Resources/` 下匹配 `xx-XX.json` 的文件作为可用语言，放入 `zh-CN.json` 即可，**不需要修改 app.asar**（修改会触发 Info.plist 中的 asar 完整性校验）。
 - 前端从 `Resources/ion-dist/i18n/<locale>.json`、`dynamic/<locale>.json` 加载翻译，但 bundle 里写死了支持语言列表和语言名称表，必须由 `patch_frontend.py` 追加 zh-CN。补丁靠正则匹配 `"id-ID"` 相关代码，前端结构变化时脚本会报错退出。

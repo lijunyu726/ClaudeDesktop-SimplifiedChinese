@@ -6,7 +6,7 @@
 
 ![coverage](https://img.shields.io/badge/翻译覆盖-100%25-brightgreen?style=flat-square)
 ![version](https://img.shields.io/badge/适配版本-2.16120.0-blue?style=flat-square)
-![status](https://img.shields.io/badge/主界面加载-暂不可用-orange?style=flat-square)
+![status](https://img.shields.io/badge/汉化加载-暂不可用-orange?style=flat-square)
 ![license](https://img.shields.io/badge/许可-MIT-yellow?style=flat-square)
 
 </div>
@@ -14,11 +14,13 @@
 ---
 
 > [!WARNING]
-> **当前状态：翻译文件已完整，但主界面暂时无法显示中文。**
+> **当前状态：翻译文件已完整，但在当前版本中无法让界面显示中文。**
 >
 > 在 2.16120.0 中，使用 Anthropic 账号登录时，Claude Desktop 的主界面（聊天、设置、语言选择等）直接从 `https://claude.ai` 在线加载，不读取应用内的本地前端和翻译文件。因此 `tools/install-macos.sh` 生成的副本**不会让主界面变成中文**，语言列表里也不会出现“简体中文”。
 >
-> 由本地主进程加载的菜单栏、托盘、系统对话框（742 条）不受此影响。让主界面加载中文的方案仍在评估中，进展会更新在这里。
+> 菜单栏、托盘、系统对话框（742 条）虽然由本地主进程加载，但启动后在线主界面会把账号语言同步回主进程，本地设置的 zh-CN 会被覆盖为英文，同样无法生效。
+>
+> 在不修改应用主进程代码的前提下，目前没有可行的加载方式。翻译文件会保留并随版本维护，以备官方支持中文或改回本地加载界面时使用。
 
 ## ✨ 特点
 
@@ -46,14 +48,6 @@ tools/install-macos.sh
 4. 进入 **设置 → 语言**，选择 **简体中文**（仅在主界面由本地前端加载时可见，见页首“当前状态”）。
 
 自定义路径：`tools/install-macos.sh <官方应用路径> <中文版路径>`。
-
-### 汉化菜单栏
-
-菜单栏、托盘、系统对话框由本地主进程加载，可以单独切换为中文（主界面不受影响）：
-
-1. 完全退出 Claude（Cmd+Q，官方版和中文版都要退出）。
-2. 在终端运行 `tools/set-locale.sh`（会先备份配置；恢复英文用 `tools/set-locale.sh en-US`）。
-3. 打开 `~/Applications/Claude-zh.app`。
 
 ### 卸载
 
