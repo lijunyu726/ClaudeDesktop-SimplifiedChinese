@@ -1,44 +1,30 @@
 <div align="center">
 
-# Claude Desktop 简体中文语言包
+# Claude Desktop 简体中文
 
-### 让 Claude Desktop 说中文 —— 完整 33,000+ 条界面翻译
+**完整汉化 Claude Desktop 的 33,034 条界面文案，一条命令生成中文版。**
 
-> 把 Claude Desktop 的英文界面完整汉化为简体中文，并提供 macOS 一键生成中文版的脚本。
-
----
-
-![coverage](https://img.shields.io/badge/翻译覆盖-100%25-brightgreen?style=flat-square)
-![version](https://img.shields.io/badge/对应版本-2.16120.0-blue?style=flat-square)
-![locale](https://img.shields.io/badge/locale-zh--CN-blue?style=flat-square)
+![coverage](https://img.shields.io/badge/覆盖率-100%25-brightgreen?style=flat-square)
+![version](https://img.shields.io/badge/适配版本-2.16120.0-blue?style=flat-square)
+![platform](https://img.shields.io/badge/安装脚本-macOS-lightgrey?style=flat-square)
 ![license](https://img.shields.io/badge/许可-MIT-yellow?style=flat-square)
+
+[快速开始](#-快速开始) · [常见问题](#-常见问题) · [官方更新后](#-官方更新后) · [其他平台](#-其他平台) · [参与贡献](#-参与贡献)
 
 </div>
 
 ---
 
-## ✨ 这是什么
+## ✨ 特点
 
-本仓库提供 **Claude Desktop** 的简体中文（`zh-CN`）翻译文件，覆盖菜单栏、主聊天界面、设置面板、Code 标签页、Cowork、模型描述等全部用户可见文案，并附带：
+- **完整覆盖**：菜单、聊天、设置、Code 标签页、Cowork、连接器、技能、模型描述，与当前版本英文逐条对齐。
+- **不动官方应用**：安装脚本生成独立的中文副本，官方 Claude 照常使用、照常更新，随时可以换回去。
+- **译文可靠**：每一条都经过占位符、ICU 复数/选择语法、标签结构的自动校验，避免界面显示错乱。
+- **用语统一**：大陆简体用语，产品名和技术名词（Claude Code、MCP、Git、Pro、Max、Team 等）保留英文。
 
-- **macOS 安装脚本**：基于官方应用生成一份中文副本，**不修改官方应用**；
-- **维护工具**：Claude Desktop 更新后，自动找出新增文案、校验译文结构。
+## 🚀 快速开始
 
----
-
-## 📦 翻译文件
-
-| 文件 | 层级 | 条目数 | 涵盖内容 |
-|:-----|:-----|------:|:---------|
-| `patches/zh-CN-layer-b.json` | 主进程 | **742** | 应用菜单、托盘、快捷键、系统对话框 |
-| `patches/zh-CN-layer-c.json` | 前端 | **32,243** | 聊天界面、设置、连接器、技能、Code 标签页、Cowork |
-| `patches/zh-CN-layer-c-dynamic.json` | 动态文案 | **49** | 模型描述、功能提示 |
-
-翻译与 Claude Desktop **2.16120.0** 的英文文件逐条对齐，所有条目都通过了占位符 / ICU / 标签结构校验。
-
----
-
-## 🚀 macOS 安装
+> 需要：macOS、已安装官方 Claude Desktop（位于 `/Applications/Claude.app`）、Python 3。
 
 ```bash
 git clone https://github.com/lijunyu726/ClaudeDesktop-SimplifiedChinese.git
@@ -46,68 +32,75 @@ cd ClaudeDesktop-SimplifiedChinese
 tools/install-macos.sh
 ```
 
-脚本会把 `/Applications/Claude.app` 复制为 `~/Applications/Claude-zh.app`，放入翻译文件、修补前端的语言列表，再做本机临时签名。然后：
+脚本几秒钟就能完成，会生成 `~/Applications/Claude-zh.app`。然后：
 
-1. 完全退出官方 Claude（Cmd+Q）。中文版和官方应用共用同一份账号数据，不能同时运行。
+1. **完全退出官方 Claude**（Cmd+Q）。
 2. 打开 `~/Applications/Claude-zh.app`。
-3. 首次启动如果弹出钥匙串“Claude Safe Storage”访问请求，输入 Mac 登录密码并选“始终允许”。
-4. 在 **设置 → 语言** 中选择“简体中文”。
+3. 如果弹出钥匙串“Claude Safe Storage”的访问请求，输入 Mac 登录密码并选择 **始终允许**。
+4. 进入 **设置 → 语言**，选择 **简体中文**。
 
-注意事项：
+自定义路径：`tools/install-macos.sh <官方应用路径> <中文版路径>`。
 
-- 中文副本**不会自动更新**。官方应用更新后，重新运行 `tools/install-macos.sh` 即可（翻译需要先按下方流程补齐）。
-- 屏幕录制、辅助功能等系统权限需要为副本重新授权。
-- 不想用了：删除 `~/Applications/Claude-zh.app`，继续用官方应用即可。
+### 卸载
 
-Windows / Linux 暂无安装脚本，翻译文件的加载路径见 [AGENTS.md](AGENTS.md#加载机制关键设计决策)。
+删除 `~/Applications/Claude-zh.app`，重新打开官方 Claude 即可。账号、会话、设置都保留在原处。
 
----
+## ❓ 常见问题
 
-## 🔄 Claude Desktop 更新后补译
+**为什么不能和官方 Claude 同时打开？**
+两者共用同一份账号数据（会话、登录状态、设置），同一时间只能运行一个。在中文版里能看到并继续官方版里的所有会话。
 
-```bash
-python3 tools/build_patches.py extract   # 对照新版英文，把缺失条目拆成批次到 scratch/chunks/
-# 把每个 scratch/chunks/xx.en.json 翻译成同名 xx.zh.json，然后逐个校验：
-python3 tools/icu_check.py scratch/chunks/c-00.en.json scratch/chunks/c-00.zh.json
-python3 tools/build_patches.py merge     # 合并回 patches/，丢弃新版已不用的条目
-```
+**为什么会弹出钥匙串授权？**
+中文版用的是本机临时签名，系统把它当成另一个应用，所以第一次读取 Claude 保存的登录凭据时需要你确认。
 
-翻译规则（占位符、ICU 语法、标签、用语）见 [AGENTS.md](AGENTS.md) 和 [CONTRIBUTING.md](CONTRIBUTING.md)。
+**屏幕录制、辅助功能等权限还要重新给吗？**
+要。这些系统权限绑定在应用签名上，需要在“系统设置 → 隐私与安全性”里为中文版重新授权一次。
 
----
+**中文版会自动更新吗？**
+不会。官方应用更新后，重新运行一次 `tools/install-macos.sh` 即可，见下一节。
 
-## 🗂 仓库结构
+**为什么有少量文字还是英文？**
+少数文案由服务器实时下发，或直接写在前端代码里，不在翻译文件中，本项目无法覆盖。
 
-```
-claude-desktop-zh/
-├── patches/                 # 翻译 JSON 文件
-├── tools/
-│   ├── install-macos.sh     # 生成中文版应用
-│   ├── patch_frontend.py    # 让前端识别 zh-CN
-│   ├── build_patches.py     # 提取缺失条目 / 合并翻译
-│   └── icu_check.py         # 校验译文结构
-├── AGENTS.md                # 维护说明与设计决策
-├── CONTRIBUTING.md          # 翻译贡献指南
-└── LICENSE
-```
+## 🔄 官方更新后
 
----
+1. 拉取本仓库最新翻译：`git pull`
+2. 重新生成中文版：`tools/install-macos.sh`
 
-## 📋 已知边界
+如果仓库还没适配你的新版本，新出现的文案会显示英文。欢迎按 [贡献指南](CONTRIBUTING.md#适配新版本) 补译，流程是：`build_patches.py extract` 提取缺失条目 → 翻译 → `icu_check.py` 校验 → `build_patches.py merge` 合并。
 
-- Claude Desktop 每次更新都可能新增或改写文案，需要重新补译。
-- 少量文案由服务器下发或在前端写死，不在翻译文件中，仍会显示英文。
-- 前端补丁依赖当前 bundle 的代码结构；结构变化时 `patch_frontend.py` 会报错退出，需要更新匹配规则。
-- 已在 2.16120.0 上验证脚本可生成并签名中文副本；界面显示效果需在启动中文副本后确认。
+## 🖥 其他平台
 
----
+Windows / Linux 暂无安装脚本。翻译文件与 Claude Desktop 资源目录的对应关系：
+
+| 仓库文件 | 放到 Claude 的 `Resources/` 下 |
+|:--|:--|
+| `patches/zh-CN-layer-b.json` | `zh-CN.json` |
+| `patches/zh-CN-layer-c.json` | `ion-dist/i18n/zh-CN.json` |
+| `patches/zh-CN-layer-c-dynamic.json` | `ion-dist/i18n/dynamic/zh-CN.json` |
+
+此外前端代码里写死了支持的语言列表，需要用 `tools/patch_frontend.py <应用目录>` 追加 zh-CN（脚本按 macOS 的 `.app` 目录结构查找文件，其他平台需调整路径）。原理见 [AGENTS.md](AGENTS.md#加载机制关键设计决策)。
+
+## 📦 仓库内容
+
+| 路径 | 说明 |
+|:--|:--|
+| `patches/zh-CN-layer-b.json` | 主进程：菜单、托盘、系统对话框（742 条） |
+| `patches/zh-CN-layer-c.json` | 前端界面（32,243 条） |
+| `patches/zh-CN-layer-c-dynamic.json` | 模型描述等动态文案（49 条） |
+| `tools/install-macos.sh` | 生成中文版应用 |
+| `tools/patch_frontend.py` | 让前端识别 zh-CN |
+| `tools/build_patches.py` | 提取待译条目 / 合并翻译 |
+| `tools/icu_check.py` | 校验译文结构 |
+| `CONTRIBUTING.md` | 翻译规范与术语表 |
+| `AGENTS.md` | 维护说明与设计决策 |
+
+## 🤝 参与贡献
+
+发现译得不好的地方，或想帮忙适配新版本，请看 [贡献指南](CONTRIBUTING.md)，也欢迎直接提 Issue，附上版本号、出现位置和建议译法。
 
 ## 📄 许可证
 
-[MIT License](LICENSE)
+[MIT](LICENSE)
 
-<div align="center">
-
-<sub>⚠️ 本项目是非官方的社区翻译项目，与 Anthropic 无任何关联。使用风险自负。</sub>
-
-</div>
+<sub>本项目是非官方社区翻译，与 Anthropic 无关。中文版应用由你在本机基于官方应用生成，使用风险自负。</sub>
