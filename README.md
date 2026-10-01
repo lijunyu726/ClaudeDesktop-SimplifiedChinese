@@ -2,20 +2,16 @@
 
 # Claude Desktop 简体中文语言包
 
-### 让 Claude Desktop 说中文 —— 完整 18,500 条界面翻译
+### 让 Claude Desktop 说中文 —— 完整 33,000+ 条界面翻译
 
-> 把 Claude Desktop 的英文界面完整汉化为简体中文的**纯语言包**项目。
-> 仓库只包含 JSON 翻译文件，不绑定任何操作系统，不提供安装脚本。
+> 把 Claude Desktop 的英文界面完整汉化为简体中文，并提供 macOS 一键生成中文版的脚本。
 
 ---
 
 ![coverage](https://img.shields.io/badge/翻译覆盖-100%25-brightgreen?style=flat-square)
+![version](https://img.shields.io/badge/对应版本-2.16120.0-blue?style=flat-square)
 ![locale](https://img.shields.io/badge/locale-zh--CN-blue?style=flat-square)
-![format](https://img.shields.io/badge/格式-JSON-lightgrey?style=flat-square)
 ![license](https://img.shields.io/badge/许可-MIT-yellow?style=flat-square)
-![platform](https://img.shields.io/badge/支持-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey?style=flat-square)
-
-[📦 查看文件](#-包含的文件) · [🚀 使用方式](#-使用方式) · [📐 格式规范](#-json-格式规范) · [🤝 贡献翻译](#-贡献翻译) · [📄 许可证](#-许可证)
 
 </div>
 
@@ -23,130 +19,60 @@
 
 ## ✨ 这是什么
 
-本仓库提供 **Claude Desktop** 桌面端的简体中文 (`zh-CN`) 翻译文件，覆盖从菜单栏到主聊天界面、从设置面板到动态模型描述的**全部用户可见文案**。
+本仓库提供 **Claude Desktop** 的简体中文（`zh-CN`）翻译文件，覆盖菜单栏、主聊天界面、设置面板、Code 标签页、Cowork、模型描述等全部用户可见文案，并附带：
 
-仓库的核心承诺：
-
-- ✅ **纯翻译文件** —— 仅 3 个 JSON，无 `install.sh`、无 Python、无依赖
-- ✅ **跨平台** —— 文件路径与 Claude Desktop 的 i18n 加载机制一致，适用于 macOS / Windows / Linux
-- ✅ **可审计** —— 所有 JSON 都是 UTF-8 明文，可逐条对照英文源校对
-- ✅ **可复用** —— 不绑死任何加载工具，你可以写自己的脚本，或用现成的第三方注入工具
+- **macOS 安装脚本**：基于官方应用生成一份中文副本，**不修改官方应用**；
+- **维护工具**：Claude Desktop 更新后，自动找出新增文案、校验译文结构。
 
 ---
 
-## 📦 包含的文件
-
-```
-patches/
-├── zh-CN-layer-b.json            →  Layer B — Electron 主进程（菜单、对话框）
-├── zh-CN-layer-c.json            →  Layer C — Web 渲染器（主聊天界面）
-└── zh-CN-layer-c-dynamic.json    →  Layer C Dynamic（模型描述等动态内容）
-```
+## 📦 翻译文件
 
 | 文件 | 层级 | 条目数 | 涵盖内容 |
 |:-----|:-----|------:|:---------|
-| `patches/zh-CN-layer-b.json` | Electron 主进程 | **435** | 应用菜单、剪贴板、托盘菜单、快捷键、系统对话框 |
-| `patches/zh-CN-layer-c.json` | Web 渲染器 | **18,000+** | 聊天界面、设置、连接器、扩展、Artifacts、Skills、Cowork UI |
-| `patches/zh-CN-layer-c-dynamic.json` | Dynamic | **46** | Opus / Sonnet / Haiku 等模型描述、功能提示 |
-| | **合计** | **≈ 18,500** | |
+| `patches/zh-CN-layer-b.json` | 主进程 | **742** | 应用菜单、托盘、快捷键、系统对话框 |
+| `patches/zh-CN-layer-c.json` | 前端 | **32,243** | 聊天界面、设置、连接器、技能、Code 标签页、Cowork |
+| `patches/zh-CN-layer-c-dynamic.json` | 动态文案 | **49** | 模型描述、功能提示 |
+
+翻译与 Claude Desktop **2.16120.0** 的英文文件逐条对齐，所有条目都通过了占位符 / ICU / 标签结构校验。
 
 ---
 
-## 🚀 使用方式
-
-### 1. 克隆仓库
+## 🚀 macOS 安装
 
 ```bash
 git clone https://github.com/lijunyu726/ClaudeDesktop-SimplifiedChinese.git
 cd ClaudeDesktop-SimplifiedChinese
+tools/install-macos.sh
 ```
 
-### 2. 对应路径复制
+脚本会把 `/Applications/Claude.app` 复制为 `~/Applications/Claude-zh.app`，放入翻译文件、修补前端的语言列表，再做本机临时签名。然后：
 
-将翻译文件复制到 Claude Desktop 安装目录的对应位置：
+1. 完全退出官方 Claude（Cmd+Q）。中文版和官方应用共用同一份账号数据，不能同时运行。
+2. 打开 `~/Applications/Claude-zh.app`。
+3. 首次启动如果弹出钥匙串“Claude Safe Storage”访问请求，输入 Mac 登录密码并选“始终允许”。
+4. 在 **设置 → 语言** 中选择“简体中文”。
 
-| 仓库文件 | → | Claude Desktop 加载路径 |
-|:---------|:-:|:------------------------|
-| `patches/zh-CN-layer-b.json` | → | `Resources/zh-CN.json` |
-| `patches/zh-CN-layer-b.json` | → | `Resources/zh.json` （别名） |
-| `patches/zh-CN-layer-c.json` | → | `Resources/ion-dist/i18n/zh-CN.json` |
-| `patches/zh-CN-layer-c-dynamic.json` | → | `Resources/ion-dist/i18n/dynamic/zh-CN.json` |
+注意事项：
 
-### 3. 切换语言
+- 中文副本**不会自动更新**。官方应用更新后，重新运行 `tools/install-macos.sh` 即可（翻译需要先按下方流程补齐）。
+- 屏幕录制、辅助功能等系统权限需要为副本重新授权。
+- 不想用了：删除 `~/Applications/Claude-zh.app`，继续用官方应用即可。
 
-重启 Claude Desktop，进入 **Settings → Language → 中文 (zh-CN)** 即可看到中文界面。
-
-> ⚠️ **关于加载步骤**
-> 不同操作系统的安装路径和包结构不同（例如 macOS 的 `.app`、Windows 的 `.exe` 目录），Claude 自动更新也会覆盖修改。
-> 因此本仓库**不维护加载脚本**——你可以使用第三方注入工具，或自行根据上表路径复制。
+Windows / Linux 暂无安装脚本，翻译文件的加载路径见 [AGENTS.md](AGENTS.md#加载机制关键设计决策)。
 
 ---
 
-## 📐 JSON 格式规范
-
-### 顶层结构
-
-```json
-{
-  "hashKey1": "翻译后的中文文本",
-  "hashKey2": "欢迎 {name}，{count} 条新消息",
-  "hashKey3": "请阅读 <link>使用文档</link>",
-  "hashKey4": "{count, plural, one {# 条消息} other {# 条消息}}"
-}
-```
-
-### ⚠️ 必须保留的不变量
-
-| 类型 | 例子 | 说明 |
-|:-----|:------|:-----|
-| **简单占位符** | `{name}`、`{count}`、`{error}`、`{pct}` | React `useIntl` 的 `values` prop |
-| **富文本标签** | `<link>...</link>`、`<b>...</b>`、`<learnMoreLink>...</learnMoreLink>` | 通过 ReactElement 注入 |
-| **ICU 复数** | `{count, plural, one {# item} other {# items}}` | 标准 ICU MessageFormat |
-| **ICU 选择** | `{gender, select, male {他} female {她} other {他/她}}` | select 语法 |
-| **ICU 数字** | `{pct, number, percent}` | 数字格式化指令 |
-
-### 🚫 绝对禁止
-
-```jsonc
-// ❌ 改了 key（key 是源字符串的哈希，改了就失效）
-"F12FA90": "设置"
-
-// ❌ 把 <link> 标签改成 [链接]
-"欢迎 [链接] 阅读文档"
-
-// ❌ 把 ICU 复数语法拍平
-"count_message": "{count} 条消息"
-
-// ❌ 把中文转成 \uXXXX 转义符（应 ensure_ascii=False）
-"+abcd": "设置"
-```
-
-完整规范见 [ARCHITECTURE.md](ARCHITECTURE.md)。
-
----
-
-## 🤝 贡献翻译
-
-发现翻译错误、某个文案有更好的译法、或新增 key 需要补译？欢迎贡献！
-
-**快速上手：**
-
-1. Fork 本仓库
-2. 从 Claude Desktop 安装目录提取 `en-US.json` 作为对照源
-3. 编辑 `patches/` 下对应的 JSON 文件
-4. 按 README 顶部规范检查：不变量保留、占位符对齐、JSON 合法
-5. 提交 Pull Request
-
-**校对脚本**（在 [CONTRIBUTING.md](CONTRIBUTING.md) 完整版中提供）：
+## 🔄 Claude Desktop 更新后补译
 
 ```bash
-# 校验 JSON 合法性
-for f in patches/*.json; do
-  python3 -m json.tool "$f" > /dev/null && echo "✓ $f"
-done
+python3 tools/build_patches.py extract   # 对照新版英文，把缺失条目拆成批次到 scratch/chunks/
+# 把每个 scratch/chunks/xx.en.json 翻译成同名 xx.zh.json，然后逐个校验：
+python3 tools/icu_check.py scratch/chunks/c-00.en.json scratch/chunks/c-00.zh.json
+python3 tools/build_patches.py merge     # 合并回 patches/，丢弃新版已不用的条目
 ```
 
-详见 [贡献指南](CONTRIBUTING.md) 和 [架构文档](ARCHITECTURE.md)。
+翻译规则（占位符、ICU 语法、标签、用语）见 [AGENTS.md](AGENTS.md) 和 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ---
 
@@ -154,42 +80,34 @@ done
 
 ```
 claude-desktop-zh/
-├── patches/                       # 翻译 JSON 文件（核心）
-│   ├── zh-CN-layer-b.json
-│   ├── zh-CN-layer-c.json
-│   └── zh-CN-layer-c-dynamic.json
-├── README.md                      # 本文件
-├── CLAUDE.md                      # LLM 协作说明
-├── ARCHITECTURE.md                # 翻译格式技术规范
-├── CONTRIBUTING.md                # 翻译贡献指南
-└── LICENSE                        # MIT 许可证
+├── patches/                 # 翻译 JSON 文件
+├── tools/
+│   ├── install-macos.sh     # 生成中文版应用
+│   ├── patch_frontend.py    # 让前端识别 zh-CN
+│   ├── build_patches.py     # 提取缺失条目 / 合并翻译
+│   └── icu_check.py         # 校验译文结构
+├── AGENTS.md                # 维护说明与设计决策
+├── CONTRIBUTING.md          # 翻译贡献指南
+└── LICENSE
 ```
 
 ---
 
 ## 📋 已知边界
 
-- Claude Desktop 升级可能新增 key —— 需从新版 `en-US.json` 提取并补译
-- 部分 UI 文案可能由前端硬编码，不在 i18n 文件中
-- 自动更新会覆盖已汉化的安装目录 —— 需重新注入
-
----
-
-## 🔗 相关链接
-
-- [Claude Desktop 下载](https://claude.ai/download)
-- [Claude 官方文档](https://docs.anthropic.com)
+- Claude Desktop 每次更新都可能新增或改写文案，需要重新补译。
+- 少量文案由服务器下发或在前端写死，不在翻译文件中，仍会显示英文。
+- 前端补丁依赖当前 bundle 的代码结构；结构变化时 `patch_frontend.py` 会报错退出，需要更新匹配规则。
+- 已在 2.16120.0 上验证脚本可生成并签名中文副本；界面显示效果需在启动中文副本后确认。
 
 ---
 
 ## 📄 许可证
 
-本项目以 [MIT License](LICENSE) 开源发布。
-
----
+[MIT License](LICENSE)
 
 <div align="center">
 
-<sub>⚠️ 本项目是非官方的社区翻译项目，与 Anthropic 无任何关联。翻译文件按原样提供，使用风险自负。</sub>
+<sub>⚠️ 本项目是非官方的社区翻译项目，与 Anthropic 无任何关联。使用风险自负。</sub>
 
 </div>
