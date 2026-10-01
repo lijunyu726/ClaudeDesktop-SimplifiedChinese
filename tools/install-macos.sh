@@ -22,7 +22,9 @@ done
 [ -n "$PY" ] || die "找不到可用的 python3，可用 PYTHON=/路径/python3 指定"
 
 [ -d "$SRC/Contents/Resources/ion-dist" ] || die "找不到官方应用：$SRC"
-if pgrep -f "$DST/Contents/MacOS/" >/dev/null; then
+# 先取进程列表再匹配：在 pipefail 下 grep -q 提前退出会让 ps 收到 SIGPIPE，导致检测失效
+PROCS="$(ps -axo comm=)"
+if grep -qF "$DST/Contents/MacOS/Claude" <<<"$PROCS"; then
   die "中文版正在运行，请先退出再安装"
 fi
 if [ -e "$DST" ]; then

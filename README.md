@@ -47,6 +47,14 @@ tools/install-macos.sh
 
 自定义路径：`tools/install-macos.sh <官方应用路径> <中文版路径>`。
 
+### 汉化菜单栏
+
+菜单栏、托盘、系统对话框由本地主进程加载，可以单独切换为中文（主界面不受影响）：
+
+1. 完全退出 Claude（Cmd+Q，官方版和中文版都要退出）。
+2. 在终端运行 `tools/set-locale.sh`（会先备份配置；恢复英文用 `tools/set-locale.sh en-US`）。
+3. 打开 `~/Applications/Claude-zh.app`。
+
 ### 卸载
 
 删除 `~/Applications/Claude-zh.app`，重新打开官方 Claude 即可。账号、会话、设置都保留在原处。
