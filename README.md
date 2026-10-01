@@ -2,29 +2,35 @@
 
 # Claude Desktop 简体中文
 
-**完整汉化 Claude Desktop 的 33,034 条界面文案，一条命令生成中文版。**
+**Claude Desktop 全部 33,034 条界面文案的简体中文翻译。**
 
-![coverage](https://img.shields.io/badge/覆盖率-100%25-brightgreen?style=flat-square)
+![coverage](https://img.shields.io/badge/翻译覆盖-100%25-brightgreen?style=flat-square)
 ![version](https://img.shields.io/badge/适配版本-2.16120.0-blue?style=flat-square)
-![platform](https://img.shields.io/badge/安装脚本-macOS-lightgrey?style=flat-square)
+![status](https://img.shields.io/badge/主界面加载-暂不可用-orange?style=flat-square)
 ![license](https://img.shields.io/badge/许可-MIT-yellow?style=flat-square)
-
-[快速开始](#-快速开始) · [常见问题](#-常见问题) · [官方更新后](#-官方更新后) · [其他平台](#-其他平台) · [参与贡献](#-参与贡献)
 
 </div>
 
 ---
 
+> [!WARNING]
+> **当前状态：翻译文件已完整，但主界面暂时无法显示中文。**
+>
+> 在 2.16120.0 中，使用 Anthropic 账号登录时，Claude Desktop 的主界面（聊天、设置、语言选择等）直接从 `https://claude.ai` 在线加载，不读取应用内的本地前端和翻译文件。因此 `tools/install-macos.sh` 生成的副本**不会让主界面变成中文**，语言列表里也不会出现“简体中文”。
+>
+> 由本地主进程加载的菜单栏、托盘、系统对话框（742 条）不受此影响。让主界面加载中文的方案仍在评估中，进展会更新在这里。
+
 ## ✨ 特点
 
 - **完整覆盖**：菜单、聊天、设置、Code 标签页、Cowork、连接器、技能、模型描述，与当前版本英文逐条对齐。
-- **不动官方应用**：安装脚本生成独立的中文副本，官方 Claude 照常使用、照常更新，随时可以换回去。
 - **译文可靠**：每一条都经过占位符、ICU 复数/选择语法、标签结构的自动校验，避免界面显示错乱。
 - **用语统一**：大陆简体用语，产品名和技术名词（Claude Code、MCP、Git、Pro、Max、Team 等）保留英文。
 
-## 🚀 快速开始
+## 🚀 安装脚本（实验性）
 
-> 需要：macOS、已安装官方 Claude Desktop（位于 `/Applications/Claude.app`）、Python 3。
+> 受上方“当前状态”限制，脚本目前只对应用内置的本地前端生效，使用 Anthropic 账号登录时主界面仍是英文。
+
+> 需要：macOS、已安装官方 Claude Desktop（位于 `/Applications/Claude.app`）、Python 3（可用 `PYTHON=/路径/python3` 指定）。
 
 ```bash
 git clone https://github.com/lijunyu726/ClaudeDesktop-SimplifiedChinese.git
@@ -37,7 +43,7 @@ tools/install-macos.sh
 1. **完全退出官方 Claude**（Cmd+Q）。
 2. 打开 `~/Applications/Claude-zh.app`。
 3. 如果弹出钥匙串“Claude Safe Storage”的访问请求，输入 Mac 登录密码并选择 **始终允许**。
-4. 进入 **设置 → 语言**，选择 **简体中文**。
+4. 进入 **设置 → 语言**，选择 **简体中文**（仅在主界面由本地前端加载时可见，见页首“当前状态”）。
 
 自定义路径：`tools/install-macos.sh <官方应用路径> <中文版路径>`。
 
@@ -59,8 +65,8 @@ tools/install-macos.sh
 **中文版会自动更新吗？**
 不会。官方应用更新后，重新运行一次 `tools/install-macos.sh` 即可，见下一节。
 
-**为什么有少量文字还是英文？**
-少数文案由服务器实时下发，或直接写在前端代码里，不在翻译文件中，本项目无法覆盖。
+**为什么语言列表里没有“简体中文”？**
+见页首“当前状态”：主界面从 claude.ai 在线加载，语言列表由网站决定，本地修改无法影响。
 
 ## 🔄 官方更新后
 

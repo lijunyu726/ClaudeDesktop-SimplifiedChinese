@@ -14,6 +14,13 @@ MARKER="Contents/Resources/.claude-zh"
 
 die() { echo "错误：$*" >&2; exit 1; }
 
+# /usr/bin/python3 在未同意 Xcode 许可时无法运行，依次尝试可用的解释器
+PY=""
+for c in "${PYTHON:-}" python3 /opt/homebrew/bin/python3 /usr/local/bin/python3; do
+  [ -n "$c" ] && "$c" -c 'import sys' >/dev/null 2>&1 && { PY="$c"; break; }
+done
+[ -n "$PY" ] || die "找不到可用的 python3，可用 PYTHON=/路径/python3 指定"
+
 [ -d "$SRC/Contents/Resources/ion-dist" ] || die "找不到官方应用：$SRC"
 if pgrep -f "$DST/Contents/MacOS/" >/dev/null; then
   die "中文版正在运行，请先退出再安装"
@@ -32,7 +39,7 @@ RES="$DST/Contents/Resources"
 cp "$ROOT/patches/zh-CN-layer-b.json" "$RES/zh-CN.json"
 cp "$ROOT/patches/zh-CN-layer-c.json" "$RES/ion-dist/i18n/zh-CN.json"
 cp "$ROOT/patches/zh-CN-layer-c-dynamic.json" "$RES/ion-dist/i18n/dynamic/zh-CN.json"
-python3 "$ROOT/tools/patch_frontend.py" "$DST"
+"$PY" "$ROOT/tools/patch_frontend.py" "$DST"
 
 defaults read "$SRC/Contents/Info.plist" CFBundleShortVersionString > "$DST/$MARKER"
 
